@@ -7,5 +7,5 @@ sealed class NewsEvent extends Equatable {
   List<Object> get props => [];
 }
 class FetchNews extends NewsEvent {
-  
+  const FetchNews();
 }

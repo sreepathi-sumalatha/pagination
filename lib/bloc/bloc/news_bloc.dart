@@ -11,24 +11,30 @@ part 'news_event.dart';
 part 'news_state.dart';
 
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
-  NewsBloc() : super(NewsInitialgit ()) {
+  NewsBloc() : super(NewsInitial ()) {
     on<FetchNews>(_onFetchNews);
   }
 
-  Future<void> _onFetchNews(FetchNews event, Emitter<NewsState> emit) async {
+  Future<void> _onFetchNews( event,  emit) async {
     print("here!!!!!!!!!!!! ");
-     emit(NewsLoadingState());
+      emit(NewsLoadingState());
     try {
+      print("response!!!!!!!!!!!! " );
       Response response = await http.get(Uri.parse('https://newsapi.org/v2/everything?limit=10&offset=0&apiKey=1d72a50bad1a4871a74830e1fa3a457a&q=tesla')
           );
       if (response.statusCode == 200) {
-        final List<NewsModel> articles = json.decode(response.body)['articles'];
-      
-        emit(NewsLoadedState(articles: articles));
+         print("response!!!!!!!!!!!! " + response.body.toString());
+        final List<dynamic> newArticles =
+         json.decode(response.body)['articles'];
+        //  List<NewsModel> articles = json.decode(response.body)['articles'];
+      //  print("response!!!!!!!!!!!! " + response.body.toString());
+      print("data is------------ > $newArticles");
+      emit(NewsLoadedState(articles: newArticles));
+      print("Getting data....");
       } else {
         emit(NewsError());
       }
-       print("response!!!!!!!!!!!! " + response.body.toString());
+     
     } catch (e) {
       emit(NewsError());
     }
