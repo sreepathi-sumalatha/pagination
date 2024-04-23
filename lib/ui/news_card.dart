@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:news_with_pagination/model/news_model.dart';
+
 // created sample card// instead we can use the listTile also.
 class NewsPage extends StatefulWidget {
   const NewsPage({super.key});

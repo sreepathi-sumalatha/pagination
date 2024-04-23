@@ -11,7 +11,7 @@ class NewsScreen extends StatefulWidget {
 class _NewsScreenState extends State<NewsScreen> {
   int offset = 0;
   bool isLoading = false;
-  bool hasMore = true;
+  // bool hasMore = true;
   ScrollController _scrollController = ScrollController();
   late NewsBloc newsBloc;
 
@@ -33,7 +33,9 @@ class _NewsScreenState extends State<NewsScreen> {
   void _loadMoreItems() {
     if (_scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent &&
-        !isLoading) {}
+        !isLoading) {
+      newsBloc.add(const LoadMoreNews());
+    }
   }
 
   @override

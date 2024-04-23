@@ -16,4 +16,6 @@ class NewsModel {
         "description": description,
         "urlToImage": urlToImage,
       };
+
+  fromJson() {}
 }
