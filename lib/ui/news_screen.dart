@@ -11,7 +11,7 @@ class NewsScreen extends StatefulWidget {
 class _NewsScreenState extends State<NewsScreen> {
   int offset = 0;
   bool isLoading = false;
-  // bool hasMore = true;
+
   ScrollController _scrollController = ScrollController();
   late NewsBloc newsBloc;
 
@@ -20,8 +20,14 @@ class _NewsScreenState extends State<NewsScreen> {
     super.initState();
     newsBloc = NewsBloc();
     newsBloc.add(const FetchNews());
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        newsBloc.add(const LoadMoreNews());
+      }
+    });
 
-    _scrollController.addListener(_loadMoreItems);
+    // _scrollController.addListener(_loadMoreItems);
   }
 
   @override
@@ -34,8 +40,20 @@ class _NewsScreenState extends State<NewsScreen> {
     if (_scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent &&
         !isLoading) {
+      //  _getMore();
       newsBloc.add(const LoadMoreNews());
     }
+  }
+
+  _getMore() {
+    setState(() {
+      isLoading = true;
+      newsBloc.add(const FetchNews());
+    });
+    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -53,38 +71,63 @@ class _NewsScreenState extends State<NewsScreen> {
                 var articles = state.articles;
                 return ListView.builder(
                   itemCount: articles.length + 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    if (index < articles.length) {
-                      return Card(
-                        margin: const EdgeInsets.all(8.0),
-                        child: ListTile(
-                          title: Text(
-                            articles[index]['title'],
-                            maxLines: 2,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            articles[index]['description'],
-                            maxLines: 2,
-                          ),
-                          leading: Image.network(
-                            articles[index]['urlToImage'] ?? '',
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      );
-                    } else {
-                      if (isLoading) {
-                        return const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      } else {
-                        return Container();
-                      }
+                  itemBuilder: (BuildContext context, int i) {
+                    if (i == state.articles.length) {
+                      //showing loader at the bottom of list
+                      return Center(child: CircularProgressIndicator());
                     }
+                    return Card(
+                      margin: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        title: Text(
+                          articles[i]['title'],
+                          maxLines: 2,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          articles[i]['description'],
+                          maxLines: 2,
+                        ),
+                        leading: Image.network(
+                          articles[i]['urlToImage'] ?? '',
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+
+                    // if (index < articles.length) {
+                    //   return Card(
+                    //     margin: const EdgeInsets.all(8.0),
+                    //     child: ListTile(
+                    //       title: Text(
+                    //         articles[index]['title'],
+                    //         maxLines: 2,
+                    //         style: const TextStyle(fontWeight: FontWeight.bold),
+                    //       ),
+                    //       subtitle: Text(
+                    //         articles[index]['description'],
+                    //         maxLines: 2,
+                    //       ),
+                    //       leading: Image.network(
+                    //         articles[index]['urlToImage'] ?? '',
+                    //         width: 100,
+                    //         height: 100,
+                    //         fit: BoxFit.cover,
+                    //       ),
+                    //     ),
+                    //   );
+                    // } else {
+                    //   if (isLoading) {
+                    //     return const Padding(
+                    //       padding: EdgeInsets.all(8.0),
+                    //       child: Center(child: CircularProgressIndicator()),
+                    //     );
+                    //   } else {
+                    //     return Container();
+                    //   }
+                    // }
                   },
                   physics: const AlwaysScrollableScrollPhysics(),
                   controller: _scrollController,

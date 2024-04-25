@@ -9,7 +9,13 @@ abstract class NewsState extends Equatable {
 
 final class NewsInitial extends NewsState {}
 
-class NewsLoadingState extends NewsState {}
+class NewsLoadingState extends NewsState {
+  // List <dynamic> oldArticles;
+  //  bool isFirstFetch ;
+  //  NewsLoadingState({required this.oldArticles, this.isFirstFetch=false});
+  // @override
+  // List<Object> get props => [oldArticles, isFirstFetch];
+}
 
 class NewsLoadedState extends NewsState {
   List<dynamic> articles;
